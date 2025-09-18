@@ -62,7 +62,25 @@ router.put("/profile", auth, async (req, res, next) => {
   }
 });
 
+// Get Vendor Profile
+router.get("/:id/profile", auth, async (req, res, next) => {
+  try {
+    if (req.user.role !== "vendor") {
+      return res.status(403).json({ message: "Only vendors can view profile" });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "Vendor not found" });
+
+    res.json(user.vendorProfile || {});
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 module.exports = router;
+
 
 
 
