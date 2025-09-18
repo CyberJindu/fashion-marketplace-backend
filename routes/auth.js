@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { auth } = require("../middleware/auth"); // <-- import middleware
 
 const router = express.Router();
 
@@ -31,4 +32,14 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// Current User (protected)
+router.get("/me", auth, async (req, res) => {
+  try {
+    res.json(req.user); // auth middleware already attaches the user
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
+
