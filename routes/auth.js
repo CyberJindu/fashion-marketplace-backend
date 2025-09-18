@@ -41,6 +41,29 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
+/** ---------------- VENDOR PROFILE ---------------- */
+router.put("/profile", auth, upload.single("logo"), async (req, res, next) => {
+  try {
+    if (req.user.role !== "vendor") {
+      return res.status(403).json({ message: "Only vendors can update profile" });
+    }
+
+    const updateData = { ...req.body };
+    if (req.file) updateData.logo = req.file.path;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { vendorProfile: updateData },
+      { new: true }
+    );
+
+    res.json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
+
 
 
