@@ -40,6 +40,7 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
     const product = new Product({
       vendorId: req.user._id,
       name,
+      category,
       description,
       price,
       stock,
@@ -54,3 +55,4 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
 });
 
 module.exports = router;
+
