@@ -52,24 +52,39 @@ router.get("/product/:id", async (req, res, next) => {
 // vendor reviews
 router.get("/vendor/:vendorId", async (req, res, next) => {
   try {
-    const reviews = await Review.find()
-      .populate({
-        path: "productId",
-        match: { vendorId: req.params.vendorId }, // only vendor's products
-        select: "name vendorId"
-      })
+    const { vendorId } = req.params;
+
+    // Find all products owned by this vendor
+    const products = await Product.find({ vendorId }).select("_id name");
+
+    const productIds = products.map((p) => p._id);
+
+    if (productIds.length === 0) {
+      return res.json([]); // no products → no reviews
+    }
+
+    // Get reviews and populate product + customer
+    const reviews = await Review.find({ productId: { $in: productIds } })
       .populate("customerId", "name")
-      .sort({ createdAt: -1 });
+      .populate("productId", "name");
 
-    // filter out reviews where productId is null (not this vendor's)
-    const vendorReviews = reviews.filter(r => r.productId);
+    // Reshape for frontend
+    const formatted = reviews.map((r) => ({
+      _id: r._id,
+      productName: r.productId?.name,
+      customerName: r.customerId?.name,
+      rating: r.rating,
+      comment: r.comment,
+      createdAt: r.createdAt,
+    }));
 
-    res.json(vendorReviews);
+    res.json(formatted);
   } catch (err) {
     next(err);
   }
 });
 
 module.exports = router;
+
 
 
