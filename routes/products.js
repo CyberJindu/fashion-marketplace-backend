@@ -67,9 +67,29 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Get single product by ID
+router.get("/:id", async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "vendorId",
+      "name email"
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 
 module.exports = router;
+
 
 
 
