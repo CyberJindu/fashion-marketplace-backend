@@ -56,38 +56,6 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
   }
 });
 
-// POST /api/products/:id/reviews
-router.post("/:id/reviews", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { userId, rating, comment } = req.body;
-
-    if (!userId || !rating || !comment) {
-      return res.status(400).json({ message: "Missing review fields." });
-    }
-
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    const review = {
-      userId,
-      rating,
-      comment,
-      createdAt: new Date(),
-    };
-
-    product.reviews = product.reviews || [];
-    product.reviews.push(review);
-    await product.save();
-
-    res.status(201).json(review);
-  } catch (err) {
-    console.error("❌ Failed to add review:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 // Get all products (for customers/homepage)
 router.get("/", async (req, res, next) => {
@@ -102,6 +70,7 @@ router.get("/", async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
