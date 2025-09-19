@@ -18,15 +18,17 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// Get all products
-router.get("/", async (req, res, next) => {
+// Get all products for a specific vendor
+router.get("/vendor/:vendorId", async (req, res, next) => {
   try {
-    const products = await Product.find().populate("vendorId", "name email");
+    const { vendorId } = req.params;
+    const products = await Product.find({ vendorId }).populate("vendorId", "name email");
     res.json(products);
   } catch (err) {
     next(err);
   }
 });
+
 
 // Vendor creates product (with image upload in same request)
 router.post("/", auth, upload.single("image"), async (req, res, next) => {
@@ -89,6 +91,7 @@ router.post("/:id/reviews", async (req, res) => {
 
 
 module.exports = router;
+
 
 
 
