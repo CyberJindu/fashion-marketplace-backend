@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// 📌 Get all products
+// Get all products
 router.get("/", async (req, res, next) => {
   try {
     const products = await Product.find().populate("vendorId", "name email");
@@ -28,7 +28,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// 📌 Vendor creates product (with image upload in same request)
+// Vendor creates product (with image upload in same request)
 router.post("/", auth, upload.single("image"), async (req, res, next) => {
   try {
     if (req.user.role !== "vendor") {
@@ -54,6 +54,41 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
   }
 });
 
+// POST /api/products/:id/reviews
+router.post("/:id/reviews", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, rating, comment } = req.body;
+
+    if (!userId || !rating || !comment) {
+      return res.status(400).json({ message: "Missing review fields." });
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const review = {
+      userId,
+      rating,
+      comment,
+      createdAt: new Date(),
+    };
+
+    product.reviews = product.reviews || [];
+    product.reviews.push(review);
+    await product.save();
+
+    res.status(201).json(review);
+  } catch (err) {
+    console.error("❌ Failed to add review:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 module.exports = router;
+
 
 
