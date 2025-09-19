@@ -21,6 +21,10 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    
+    // normalize email
+    email = email.toLowerCase().trim();
+    
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -86,6 +90,7 @@ router.get("/:id/profile", auth, async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
