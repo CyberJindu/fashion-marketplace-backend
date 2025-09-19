@@ -8,8 +8,12 @@ const router = express.Router();
 // Register
 router.post("/register", async (req, res, next) => {
   try {
-    const user = new User(req.body);
+    let { name, email, password, role } = req.body; // use let
+    email = email.toLowerCase().trim(); // normalize email
+
+    const user = new User({ name, email, password, role });
     await user.save();
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.json({ token, user });
   } catch (err) {
@@ -17,10 +21,11 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
+
 // Login
 router.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     
     // normalize email
     email = email.toLowerCase().trim();
@@ -90,6 +95,7 @@ router.get("/:id/profile", auth, async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
