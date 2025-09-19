@@ -41,9 +41,14 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
-/** ---------------- VENDOR PROFILE ---------------- */
-router.put("/profile", auth, async (req, res, next) => {
+// ---------------- VENDOR PROFILE ----------------
+router.put("/:id/profile", auth, async (req, res, next) => {
   try {
+    // Ensure only the owner (same user) can update their own profile
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
     if (req.user.role !== "vendor") {
       return res.status(403).json({ message: "Only vendors can update profile" });
     }
@@ -51,7 +56,7 @@ router.put("/profile", auth, async (req, res, next) => {
     const updateData = { ...req.body };
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
+      req.params.id,
       { vendorProfile: updateData },
       { new: true }
     );
@@ -61,6 +66,7 @@ router.put("/profile", auth, async (req, res, next) => {
     next(err);
   }
 });
+
 
 // Get Vendor Profile
 router.get("/:id/profile", auth, async (req, res, next) => {
@@ -80,6 +86,7 @@ router.get("/:id/profile", auth, async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
