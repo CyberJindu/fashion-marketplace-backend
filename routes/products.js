@@ -89,8 +89,20 @@ router.post("/:id/reviews", async (req, res) => {
   }
 });
 
+// Get all products (for customers/homepage)
+router.get("/", async (req, res, next) => {
+  try {
+    const products = await Product.find().populate("vendorId", "name email");
+    res.json(products);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 module.exports = router;
+
 
 
 
