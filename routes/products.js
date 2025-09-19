@@ -35,7 +35,7 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
       return res.status(403).json({ message: "Only vendors can add products" });
     }
 
-    const { name, description, price, stock } = req.body;
+    const { name, description, price, stock, category } = req.body;
 
     const product = new Product({
       vendorId: req.user._id,
@@ -55,4 +55,5 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
 });
 
 module.exports = router;
+
 
