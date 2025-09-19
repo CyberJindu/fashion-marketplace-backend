@@ -6,6 +6,12 @@ const { auth } = require("../middleware/auth");
 
 const router = express.Router();
 
+// Disable caching for reviews responses
+router.use((req, res, next) => {
+  res.set("Cache-Control", "no-store"); 
+  next();
+});
+
 // add review
 router.post("/", auth, async (req, res, next) => {
   try {
@@ -65,4 +71,5 @@ router.get("/vendor/:vendorId", async (req, res, next) => {
 });
 
 module.exports = router;
+
 
