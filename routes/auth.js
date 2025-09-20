@@ -66,7 +66,7 @@ router.put("/:id/profile", auth, async (req, res, next) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { vendorProfile: updateData },
+      updateData,
       { new: true }
     );
 
@@ -84,10 +84,12 @@ router.get("/:id/profile", auth, async (req, res, next) => {
       return res.status(403).json({ message: "Only vendors can view profile" });
     }
 
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select(
+      "businessName ownerName email phone location category description bankName bankAccount logo"
+    );
     if (!user) return res.status(404).json({ message: "Vendor not found" });
 
-    res.json(user.vendorProfile || {});
+    res.json(user);
   } catch (err) {
     next(err);
   }
@@ -95,6 +97,7 @@ router.get("/:id/profile", auth, async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
