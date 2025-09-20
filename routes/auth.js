@@ -112,7 +112,7 @@ router.put("/:id/customer-profile", auth, async (req, res, next) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { customerProfile: updateData },
+      req.body,
       { new: true }
     );
 
@@ -129,7 +129,7 @@ router.get("/:id/customer-profile", auth, async (req, res, next) => {
       return res.status(403).json({ message: "Only customers can view profile" });
     }
 
-    const user = await User.findById(req.params.id).select("name email customerProfile");
+    const user = await User.findById(req.params.id).select("name email address phone");
     if (!user) return res.status(404).json({ message: "Customer not found" });
 
     res.json(user);
@@ -140,6 +140,7 @@ router.get("/:id/customer-profile", auth, async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
