@@ -95,8 +95,52 @@ router.get("/:id/profile", auth, async (req, res, next) => {
   }
 });
 
+// ---------------- CUSTOMER PROFILE ----------------
+
+// Update customer profile
+router.put("/:id/customer-profile", auth, async (req, res, next) => {
+  try {
+    if (req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    if (req.user.role !== "customer") {
+      return res.status(403).json({ message: "Only customers can update profile" });
+    }
+
+    const updateData = { ...req.body };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { customerProfile: updateData },
+      { new: true }
+    );
+
+    res.json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Get customer profile
+router.get("/:id/customer-profile", auth, async (req, res, next) => {
+  try {
+    if (req.user.role !== "customer") {
+      return res.status(403).json({ message: "Only customers can view profile" });
+    }
+
+    const user = await User.findById(req.params.id).select("name email customerProfile");
+    if (!user) return res.status(404).json({ message: "Customer not found" });
+
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
 
 module.exports = router;
+
 
 
 
