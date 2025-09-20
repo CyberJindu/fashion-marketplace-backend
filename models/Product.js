@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   description: String,
   price: { type: Number, required: true },
   stock: { type: Number, default: 0 },
-  images: [String],
+  imageUrl: [String],
   reviews: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -19,5 +19,6 @@ const productSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Product", productSchema);
+
 
 
