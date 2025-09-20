@@ -22,7 +22,7 @@ const upload = multer({ storage });
 router.get("/vendor/:vendorId", async (req, res, next) => {
   try {
     const { vendorId } = req.params;
-    const products = await Product.find({ vendorId }).populate("vendorId", "name email");
+    const products = await Product.find({ vendorId }).populate("vendorId", "businessName phone name email");
     res.json(products);
   } catch (err) {
     next(err);
@@ -60,7 +60,7 @@ router.post("/", auth, upload.single("image"), async (req, res, next) => {
 // Get all products (for customers/homepage)
 router.get("/", async (req, res, next) => {
   try {
-    const products = await Product.find().populate("vendorId", "name email");
+    const products = await Product.find().populate("vendorId", "businessName phone name email");
     res.json(products);
   } catch (err) {
     next(err);
@@ -72,7 +72,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id).populate(
       "vendorId",
-      "name email"
+      "businessName phone name email"
     );
 
     if (!product) {
@@ -89,6 +89,7 @@ router.get("/:id", async (req, res, next) => {
 
 
 module.exports = router;
+
 
 
 
