@@ -19,10 +19,8 @@ const userSchema = new mongoose.Schema({
   logo: String, // Cloudinary URL
 
   // Customer profile fields
-  customerProfile: {
-    address: String,
-    phone: String,
-  },
+  address: String,
+  phone: String,
 });
 
 
@@ -37,5 +35,6 @@ userSchema.methods.comparePassword = function (password) {
 };
 
 module.exports = mongoose.model("User", userSchema);
+
 
 
